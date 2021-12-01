@@ -2,6 +2,7 @@ package com.careerdevs.placeholderV1.controllers;
 
 import com.careerdevs.placeholderV1.models.Photos;
 import com.careerdevs.placeholderV1.models.Users;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -10,18 +11,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class JSONController {
 
     //This class holds the methods that pull info with the mappings
 
-    @GetMapping("/users/all") //GET all user data
+    @GetMapping("/all") //GET all user data
     public Users[] allUsers(RestTemplate restTemplate) {
         String URL = "https://jsonplaceholder.typicode.com/users/";
         return restTemplate.getForObject(URL, Users[].class);
     }
 
-    @GetMapping ("/users/{ID}") //GET one user by ID
+    @GetMapping ("/{ID}") //GET one user by ID
     public Object getUser (RestTemplate restTemplate, @PathVariable(name = "ID") String id ){
         String URL = "https://jsonplaceholder.typicode.com/users/" + id;
 
@@ -40,7 +41,7 @@ public class JSONController {
         }
     }
 
-    @GetMapping ("/users") //Get all users within a range of IDs
+    @GetMapping ("/") //Get all users within a range of IDs
     public Object selectUsers (RestTemplate restTemplate, @RequestParam(name = "start") Integer start,
                                @RequestParam(name = "end") Integer end){
         ArrayList<Users> allUsers = new ArrayList<>();
@@ -53,6 +54,44 @@ public class JSONController {
 
         return allUsers;
     }
+
+    @DeleteMapping ("/delete/{id}")
+    public String deleteUser (RestTemplate restTemplate, @PathVariable String id){
+
+        String URL = "https://jsonplaceholder.typicode.com/users/" + id;
+
+        restTemplate.delete(URL);
+
+        return id + " has been deleted";
+    }
+
+    @PostMapping ("/create")
+    public Object createUser(RestTemplate restTemplate,@RequestBody Users users){
+
+        String URL = "https://jsonplaceholder.typicode.com/users/";
+        return restTemplate.postForObject(URL,users, Users.class);
+    }
+
+    @PutMapping ("/update/{id}")
+    public Object updateUser(RestTemplate restTemplate, @PathVariable String id, @RequestBody Users users){
+
+        String URL = "https://jsonplaceholder.typicode.com/users/" + id;
+
+        restTemplate.put(URL,users);
+
+        return "User updated";
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     // All the routes for the photos
 
